@@ -21,7 +21,8 @@ const PORT = process.env.PORT || 5000;
 app.use(
   cors({
     origin: [
-      "http://localhost:5173"          // for local frontend                         
+      "http://localhost:5173",     // for local frontend  
+      "https://double-shasa.onrender.com"          // for my hosting domain                         
     ],
     credentials: true,
   })
