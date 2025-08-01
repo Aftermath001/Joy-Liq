@@ -24,7 +24,7 @@ const __dirname = path.resolve();
 const allowedOrigins = [
   "http://localhost:3000",  // Your React dev server
   "http://localhost:5000",  // Vite dev server
-  "https://double-shasa.onrender.com", // Deployed frontend
+   
 ];
 
 app.use(
