@@ -11,7 +11,7 @@ const generateTokens = (userId) => {
     expiresIn: "7d",
   });
 
-  console.log("✅ Tokens generated:", { accessToken, refreshToken }); // 👈 Step 5 log
+  
 
   return { accessToken, refreshToken };
 };
@@ -120,7 +120,7 @@ export const refreshToken = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
 
-    console.log("🔄 Attempting token refresh. Cookie received:", refreshToken);
+    
 
     if (!refreshToken) {
       return res.status(401).json({ message: "No refresh token provided" });
@@ -129,8 +129,8 @@ export const refreshToken = async (req, res) => {
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
     const storedToken = await redis.get(`refresh_token:${decoded.userId}`);
 
-    console.log("🧠 Decoded token userId:", decoded.userId);
-    console.log("🗃 Stored refresh token:", storedToken);
+    // console.log("🧠 Decoded token userId:", decoded.userId);
+    // console.log("🗃 Stored refresh token:", storedToken);
 
     if (storedToken !== refreshToken) {
       console.log("⚠️ Token mismatch!");
@@ -148,7 +148,7 @@ export const refreshToken = async (req, res) => {
       maxAge: 15 * 60 * 1000,
     });
 
-    console.log("✅ Access token refreshed successfully");
+    // console.log("✅ Access token refreshed successfully");
     res.json({ message: "Token refreshed successfully" });
   } catch (error) {
     console.log("❌ Error in refreshToken controller:", error.message);
