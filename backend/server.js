@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import path from "path";
 import cors from "cors";
-
 import authRoutes from "./routes/auth.route.js";
 import productRoutes from "./routes/product.route.js";
 import cartRoutes from "./routes/cart.route.js";
@@ -18,16 +17,18 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// ✅ Fix 1: Allow both frontend development and production URLs
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173"          // for local frontend                         
+    ],
+    credentials: true,
+  })
+);
+
 const __dirname = path.resolve();
 
-// ✅ CORS Setup (FIXED)
-app.use(cors({
-  origin: "http://localhost:5173", 
-  credentials: true,
-}));
-
-
-// ✅ Middleware
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 
@@ -39,16 +40,21 @@ app.use("/api/coupons", couponRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
-// ✅ Serve frontend in production
+// ✅ Fix 2: Correct the wildcard route for serving frontend (in production)
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+  // Wildcard route must match anything not starting with `/api`
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
   });
+} else {
+  app.get("/", (req, res) => {
+    res.send("API is running successfully");
+  });
 }
 
-// ✅ Start Server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`✅ Server is running on port: ${PORT}`);
   connectDB();
 });

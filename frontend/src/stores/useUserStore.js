@@ -1,7 +1,7 @@
 import { create } from "zustand";
+import { toast } from "react-hot-toast";
 import instance from "../lib/axios";
 import axios from "axios";
-import { toast } from "react-hot-toast";
 
 export const useUserStore = create((set, get) => ({
 	user: null,
@@ -16,6 +16,7 @@ export const useUserStore = create((set, get) => ({
 			return toast.error("Passwords do not match");
 		}
 	
+
 		try {
 			const res = await instance.post("/auth/signup", { name, email, password });
 			console.log("Signup Response:", res); // Debugging line
