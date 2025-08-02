@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../assets/logo.png"; // Update path if different
+import logo from "../assets/doubleshasalogo.png"; // Update path if different
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
