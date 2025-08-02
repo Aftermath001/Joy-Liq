@@ -1,76 +1,126 @@
-import React, { useState } from "react";
-import logo from "../assets/doubleshasalogo.png"; // Update path if different
+import { ShoppingCart, UserPlus, LogIn, LogOut, Lock } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useUserStore } from "../stores/useUserStore";
+import { useCartStore } from "../stores/useCartStore";
+import Logo from "../assets/doubleshasalogo.png"
 
 const Navbar = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const { user, logout } = useUserStore();
+  const isAdmin = user?.role === "admin";
+  const { cart } = useCartStore();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout(navigate);
+  };
 
   return (
-    <nav className="bg-white shadow-md px-6 py-4">
-      <div className="flex items-center justify-between max-w-7xl mx-auto">
-        {/* Logo */}
-        <div>
-          <img
-            src={logo}
-            alt="DoubleShasa"
-            className="w-28 md:w-20" // logo size reduced ~25%
-          />
-        </div>
+    <header className="fixed top-0 left-0 w-full bg-[#231f20] bg-opacity-95 backdrop-blur-md shadow-lg z-40 transition-all duration-300 border-b border-[#00adef]">
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex flex-wrap justify-between items-center">
+          {/* Logo */}
+          <div className='flex items-center p-0 m-0'>
+            <img
+              onClick={() => navigate('/')}
+              className='h-10 w-10 object-cover rounded-full cursor-pointer'
+              src={Logo}
+              alt='Logo'
+            />
+          </div>
+          <Link
+            to="/"
+            className="text-2xl font-bold text-[#00adef] items-center space-x-2 flex"
+          >
+            DOUBLE SHASA
+          </Link>
 
-        {/* Hamburger menu */}
-        <div
-          className="md:hidden"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          <button className="text-gray-800 focus:outline-none">
-            {menuOpen ? (
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          <nav className="flex flex-wrap items-center gap-4">
+            <Link
+              to="/"
+              className="text-[#fefefe] hover:text-[#00adef] transition duration-300"
+            >
+              Home
+            </Link>
+            <Link
+              to="/about"
+              className="text-[#fefefe] hover:text-[#00adef] transition duration-300"
+            >
+              About
+            </Link>
+            <Link
+              to="/contact"
+              className="text-[#fefefe] hover:text-[#00adef] transition duration-300"
+            >
+              Contact
+            </Link>
+
+            {user && (
+              <>
+              <Link
+                to="/cart"
+                className="relative group text-[#fefefe] hover:text-[#00adef] transition duration-300"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
+                <ShoppingCart
+                  className="inline-block mr-1 group-hover:text-[#00adef]"
+                  size={20}
                 />
-              </svg>
-            ) : (
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                <span className="hidden sm:inline">Cart</span>
+                {cart.length > 0 && (
+                  <span className="absolute -top-2 -left-2 bg-[#00adef] text-white rounded-full px-2 py-0.5 text-xs">
+                    {cart.length}
+                  </span>
+                )}
+              </Link>
+
+              <Link
+                to="/shop"
+                className="relative group text-[#fefefe] hover:text-[#00adef] transition duration-300"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
+                🛍️ <span className="inline-block mr-1 group-hover:text-[#00adef]">Shop</span>
+              </Link>
+              </>
+
             )}
-          </button>
-        </div>
 
-        {/* Navigation Links */}
-        <ul className={`md:flex md:items-center md:space-x-6 absolute md:static top-20 left-0 w-full md:w-auto bg-white md:bg-transparent shadow-md md:shadow-none transition-all duration-300 ease-in-out z-50 ${
-          menuOpen ? "block" : "hidden"
-        }`}>
-          {["Home", "Services", "Projects", "Testimonials", "Contact"].map(
-            (item, index) => (
-              <li
-                key={index}
-                className="py-3 px-6 md:py-0 md:px-0 hover:text-[#00adef] cursor-pointer text-gray-800 text-lg md:text-base text-center"
-              >
-                {item}
-              </li>
-            )
+
+          {isAdmin && (
+            <Link
+              to="/secret-dashboard"
+              className="bg-[#00adef] hover:bg-[#0097d1] text-white px-3 py-1 rounded-md font-medium flex items-center"
+            >
+              <Lock className="inline-block mr-1" size={18} />
+              <span className="hidden sm:inline">Dashboard</span>
+            </Link>
           )}
-        </ul>
+
+          {user ? (
+            <button
+              className="bg-[#848182] hover:bg-[#989697] text-white py-2 px-4 rounded-md flex items-center"
+              onClick={handleLogout}
+            >
+              <LogOut size={18} />
+              <span className="hidden sm:inline ml-2">Log Out</span>
+            </button>
+          ) : (
+            <>
+              <Link
+                to="/signup"
+                className="bg-[#00adef] hover:bg-[#0097d1] text-white py-2 px-4 rounded-md flex items-center"
+              >
+                <UserPlus className="mr-2" size={18} /> Sign Up
+              </Link>
+              <Link
+                to="/login"
+                className="bg-[#848182] hover:bg-[#989697] text-white py-2 px-4 rounded-md flex items-center"
+              >
+                <LogIn className="mr-2" size={18} /> Login
+              </Link>
+            </>
+          )}
+        </nav>
       </div>
-    </nav>
+    </div>
+    </header >
   );
 };
 
